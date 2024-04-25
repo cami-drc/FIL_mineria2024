@@ -13,7 +13,9 @@ import funciones as fnc
 
 #%%
 
-likert_or = pd.read_csv("Charla4_Likert.csv").values #saco los valores del csv
+## Likert
+
+likert_or = pd.read_csv("Charla4_likert.csv").values #saco los valores del csv
 
 likert_limpio = fnc.clean(likert_or) #limpio los datos
 
@@ -26,3 +28,14 @@ atributos = ["Gozo","Confusion","Expectativas","Lenguaje","Analogias",
 
 fnc.graph_neg_pos(likert_limpio, atributos,  #grafico pos y neg
                   med_s=80)
+
+#%%
+
+calif_or = pd.read_csv("Charla4_calif.csv").values #saco los valores del csv
+
+#%%
+
+calif_limpio = fnc.clean(calif_or)
+
+#%%
+
