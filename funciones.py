@@ -9,6 +9,8 @@ Created on Wed Apr 24 13:54:51 2024
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 #%%
 
@@ -136,59 +138,19 @@ def neg_pos(data):
 
 #Violin
 
-def adjacent_values(vals, q1, q3):
-    upper_adjacent_value = q3 + (q3 - q1) * 1.5
-    upper_adjacent_value = np.clip(upper_adjacent_value, q3, vals[-1])
 
-    lower_adjacent_value = q1 - (q3 - q1) * 1.5
-    lower_adjacent_value = np.clip(lower_adjacent_value, vals[0], q1)
-    return lower_adjacent_value, upper_adjacent_value
-
-
-def set_axis_style(ax, labels, x_label):
-    ax.set_xticks(np.arange(1, len(labels) + 1), rotation=45, labels=labels)
-    ax.set_xlim(0.25, len(labels) + 0.75)
-    ax.set_xlabel(x_label)
-
-def violin(ax, data, title, labels, x_label="Atributos",
-           facecolor='paleturquoise', edgecolor='black',
-           med_col='k', med_marker='_', med_s=50,
-           q_vline='teal', w_vline='teal'):
+def violin(ax, data, labels, title="Violin plot", palette="colorblind"):
     
+    sns.violinplot(ax=ax, data=data, palette=palette)
+
+    ax.set_xticks(ticks=range(len(labels)), labels=labels, rotation=45)
+
     ax.set_title(title)
-    parts = ax.violinplot(
-            data, showmeans=False, showmedians=False,
-            showextrema=False)
+   
 
-    for pc in parts['bodies']:
-        pc.set_facecolor(facecolor)
-        pc.set_edgecolor(edgecolor)
-        pc.set_alpha(1)
-
-    quartile1, medians, quartile3 = np.percentile(data, [25, 50, 75], axis=0) #obtengo cuartiles
-
-    whiskers = np.array([adjacent_values(sorted_array, q1, q3)                  
-        for sorted_array, q1, q3 in zip(data, quartile1, quartile3)])
-
-    whiskers_min, whiskers_max = whiskers[:, 0], whiskers[:, 1]
-
-    inds = np.arange(1, len(medians) + 1)
-    ax.scatter(inds, medians, marker=med_marker, color= med_col, s=med_s, zorder=3)
-    ax.vlines(inds, quartile1, quartile3, color=q_vline, linestyle='-', lw=4)
-    ax.vlines(inds, whiskers_min, whiskers_max, color=w_vline, linestyle='-', lw=2)
-
-    ax.yaxis.grid(True)
-
-    set_axis_style(ax, labels, x_label)
-
-    ax.set_yticks(np.arange((np.min(data)-1), (np.max(data)+1)))
-
-def graph_neg_pos(data, labels,
-                  title1="Preguntas positivas", title2="Preguntas negativas",
-                  ylabel='Escala likert (1-5)', x_label="Atributos",
-                  facecolor='paleturquoise', edgecolor='black',
-                  med_col='k', med_marker='_', med_s=50,
-                  q_vline='teal', w_vline='teal'):
+def graph_neg_pos(data, labels,title="Preguntas Likert",
+                  title1="Atributos positivas", title2="Atributos negativas",
+                  ylabel='Escala likert (1-5)', palette="colorblind"):
     
     neg_label = [labels[i] for i in [1, 3, 6]]
     pos_label = [labels[i] for i in range(len(labels)) if i not in [1, 3, 6]]
@@ -197,12 +159,12 @@ def graph_neg_pos(data, labels,
     
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(9, 4), sharey=True)
     
-    violin(ax1, pos, title1, pos_label, x_label, facecolor, edgecolor,
-           med_col, med_marker, med_s, q_vline, w_vline)
+    fig.suptitle(title, size="xx-large", weight="roman")
+
+    violin(ax1, pos, pos_label, title=title1, palette=palette)
     
-    violin(ax2, neg, title2, neg_label, x_label, facecolor, edgecolor,
-           med_col, med_marker, med_s, q_vline, w_vline)
-    
+    violin(ax2, neg, neg_label, title=title2, palette=palette)
+
     ax1.set_ylabel(ylabel)
 
     plt.show()
