@@ -147,7 +147,7 @@ def violin(ax, data, labels, title="Violin plot", palette="colorblind"):
 
     ax.set_title(title)
    
-
+#Likert
 def graph_neg_pos(data, labels,title="Preguntas Likert",
                   title1="Atributos positivas", title2="Atributos negativas",
                   ylabel='Escala likert (1-5)', palette="colorblind"):
@@ -159,12 +159,47 @@ def graph_neg_pos(data, labels,title="Preguntas Likert",
     
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(9, 4), sharey=True)
     
-    fig.suptitle(title, size="xx-large", weight="roman")
-
+    fig.suptitle(title, size="xx-large", weight="roman", y=1)
+    
+    plt.subplots_adjust(top=0.83)
+    
     violin(ax1, pos, pos_label, title=title1, palette=palette)
     
     violin(ax2, neg, neg_label, title=title2, palette=palette)
 
     ax1.set_ylabel(ylabel)
 
+    plt.show()
+
+#Calif general
+def calif (data, title="Calificación general"):
+    
+    promedio = np.mean(data)
+    prom_red = round(promedio, 2)
+    cont = data.size
+
+    texto = "Calificación general donde 1 es pésimo y 10 es excelente. El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
+
+    plt.figure(figsize=(10, 6))  # tamaño de figura
+
+    sns.violinplot(data=data) #diagrama de violin 
+
+    plt.ylim(1, 10) #rangos en y 
+    plt.axhline(y=promedio, color='red', linestyle='--', label='Promedio') #línea para promedio 
+   
+    plt.legend(loc="lower right") #leyenda 
+    
+    plt.subplots_adjust(top=0.9) #espacio adicional entre gráfica y título 
+   
+    plt.xlabel('Participantes') #eje x título 
+    plt.ylabel('Puntaje calificación (1-10)') #eje y título 
+    
+    plt.text(0.5, 0.9, '', transform=plt.gca().transAxes)
+    plt.figtext(0.5, 0.02, texto, ha='center', fontsize=9) 
+    # pie de figura, los segundos valores es para moverlo en el eje y y el primero en x para centrarlo o no 
+    
+    plt.title('Calificación General', y=1.05, pad=20, size="xx-large") # para que no slaga pegado a la gráfica el título 
+    
+    plt.xticks(ticks=[], labels=['Participantes'])  # Eliminar las etiquetas del eje x y establecer solo 'Participantes'
+    
     plt.show()
