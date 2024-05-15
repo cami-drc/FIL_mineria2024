@@ -85,7 +85,7 @@ def clean_data(data):
 def clean(data):
     """
     Función completa de limpieza de datos. Elimina las columnas y filas vacías, la columna de id
-    y las filas (respuestas individuales) que no respondieron todas las respuestas
+    y las filas (respuestas individuales) que no respondieron todas las preguntas.
 
     Parameters
     ----------
@@ -106,6 +106,21 @@ def clean(data):
     data_clean = clean_data(data)
     
     return data_clean
+
+def edad_clean(data):
+    
+    arr_float = data.astype(np.float64)
+
+    hay_nan = np.isnan(arr_float).any()
+
+    
+    if hay_nan:
+        print("Hay valores NaN en la columna")
+        data_clean = clean_data(data)
+        return data_clean
+    else:
+        print("No hay valores NaN en la columna")
+        return data
 
 #%%
 
@@ -140,6 +155,27 @@ def neg_pos(data):
 
 
 def violin(ax, data, labels, title="Violin plot", palette="colorblind"):
+    """
+    Función que hace gráficas de violin para la función "graph_neg_pos".
+
+    Parameters
+    ----------
+    ax : variable
+        el ax a usar en la función "graph_neg_pos".
+    data : array
+        los datos a graficar.
+    labels : list/array
+        las etiquetas con los atributos.
+    title : string, optional
+        el título de la gráfica. The default is "Violin plot".
+    palette : string, optional
+        la paleta de colores a usar en la gráfica. The default is "colorblind".
+
+    Returns
+    -------
+    None.
+
+    """
     
     sns.violinplot(ax=ax, data=data, palette=palette)
 
@@ -151,6 +187,33 @@ def violin(ax, data, labels, title="Violin plot", palette="colorblind"):
 def graph_neg_pos(data, labels,title="Preguntas Likert",
                   title1="Atributos positivas", title2="Atributos negativas",
                   ylabel='Escala likert (1-5)', palette="colorblind"):
+    """
+    Hace una figura donde están separados los resultados de las preguntas Likert
+    positivas y negativas.
+
+    Parameters
+    ----------
+    data : array
+        los datos a graficar (combinados pos y neg). Tienen que estar en el mismo
+        orden que se hicieron las preguntas (no separar pos y neg).
+    labels : array/list
+        las etiquetas con los atributos.
+    title : string, optional
+        el título de la figura. The default is "Preguntas Likert".
+    title1 : string, optional
+        título de la gráfica 1. The default is "Atributos positivas".
+    title2 : string, optional
+        título de la gráfica 2. The default is "Atributos negativas".
+    ylabel : string, optional
+        título del eje y. The default is 'Escala likert (1-5)'.
+    palette : string, optional
+        paleta de colores a usar. The default is "colorblind".
+
+    Returns
+    -------
+    None.
+
+    """
     
     neg_label = [labels[i] for i in [1, 3, 6]]
     pos_label = [labels[i] for i in range(len(labels)) if i not in [1, 3, 6]]
@@ -170,15 +233,46 @@ def graph_neg_pos(data, labels,title="Preguntas Likert",
     ax1.set_ylabel(ylabel)
 
     plt.show()
-
+#%%
 #Calif general
-def calif (data, title="Calificación general"):
+def calif (data, title="Calificación general",
+           xlabel="Participantes", ylabel="Puntaje calificación (1-10)",
+           text=True, espanol=True):
+    """
+    Grafica la distribución de respuestas a la pregunta de "Calificación general".
+
+    Parameters
+    ----------
+    data : array
+        array con los datos de calificación general.
+    title : string, optional
+        título de la figura. The default is "Calificación general".
+    xlabel : string, optional
+        título del eje x. The default is "Participantes".
+    title : string, optional
+        título del eje y. The default is "Puntaje calificación (1-10)".
+    text : BOOL, optional
+        si es True, se inclluye un pie de figura (en español) que menciona el 
+        promedio (redondeado a 2 decimales) y cantidad de respuestas.
+        The default is "True".
+    espanol : BOOL, optional
+        si es True, el pie de figura se escribe en español; si es False, en inglés.
+        The default is "True".
+
+    Returns
+    -------
+    None.
+
+    """
     
     promedio = np.mean(data)
     prom_red = round(promedio, 2)
     cont = data.size
 
-    texto = "Calificación general donde 1 es pésimo y 10 es excelente. El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
+    if espanol:
+        texto = "Calificación general donde 1 es pésimo y 10 es excelente. El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
+    else:
+        texto = "General score where 1 is horrible and 10 is excellent.  The number of responses is " +str(cont)+ " and the average is " +str(prom_red)
 
     plt.figure(figsize=(10, 6))  # tamaño de figura
 
@@ -191,15 +285,49 @@ def calif (data, title="Calificación general"):
     
     plt.subplots_adjust(top=0.9) #espacio adicional entre gráfica y título 
    
-    plt.xlabel('Participantes') #eje x título 
-    plt.ylabel('Puntaje calificación (1-10)') #eje y título 
+    plt.xlabel(xlabel) #eje x título 
+    plt.ylabel(ylabel) #eje y título 
     
-    plt.text(0.5, 0.9, '', transform=plt.gca().transAxes)
-    plt.figtext(0.5, 0.02, texto, ha='center', fontsize=9) 
-    # pie de figura, los segundos valores es para moverlo en el eje y y el primero en x para centrarlo o no 
+    if text:
+        plt.text(0.5, 0.9, '', transform=plt.gca().transAxes)
+        plt.figtext(0.5, 0.02, texto, ha='center', fontsize=9) 
+        # pie de figura, los segundos valores es para moverlo en el eje y y el primero en x para centrarlo o no 
     
-    plt.title('Calificación General', y=1.05, pad=20, size="xx-large") # para que no slaga pegado a la gráfica el título 
+    plt.title(title, y=1.05, pad=20, size="xx-large") # para que no slaga pegado a la gráfica el título 
     
-    plt.xticks(ticks=[], labels=['Participantes'])  # Eliminar las etiquetas del eje x y establecer solo 'Participantes'
+    plt.xticks(ticks=[], labels=[xlabel])  # Eliminar las etiquetas del eje x y establecer solo 'Participantes'
     
+    plt.show()
+#%%
+# Edad
+
+def plot_edad(data, title="Distribución de edad",
+              xlabel = "Participantes", ylabel = "Edad (años)",
+              text = True, espanol = True):
+    
+    promedio = np.mean(data)
+    prom_red = round(promedio, 2)
+    cont = data.size
+
+    if espanol:
+        texto = "El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
+    else:
+        texto = "The number of responses is " +str(cont)+ " and the average is " +str(prom_red)
+
+    sns.violinplot(data=data)
+        
+    plt.subplots_adjust(top=0.9) #espacio adicional entre gráfica y título 
+
+    plt.xlabel(xlabel) #eje x título 
+    plt.ylabel(ylabel) #eje y título 
+        
+    if text:
+        plt.text(0.5, 0.9, '', transform=plt.gca().transAxes)
+        plt.figtext(0.5, 0.02, texto, ha='center', fontsize=9) 
+        # pie de figura, los segundos valores es para moverlo en el eje y y el primero en x para centrarlo o no 
+        
+    plt.title(title, y=1.05, pad=20, size="xx-large") # para que no slaga pegado a la gráfica el título 
+        
+    plt.xticks(ticks=[], labels=[xlabel])  # Eliminar las etiquetas del eje x y establecer solo 'Participantes'
+        
     plt.show()

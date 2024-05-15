@@ -42,3 +42,38 @@ calif_limpio = fnc.clean(calif_or)
 fnc.calif(calif_limpio)
 
 #%%
+
+## Demografía
+
+demografia_or = pd.read_csv("Charla4_Demografia.csv").values #saco los valores del csv
+
+#%%
+data = demografia_or[:,1]
+
+promedio = np.mean(data)
+prom_red = round(promedio, 2)
+cont = data.size
+
+texto = "El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
+
+
+sns.violinplot(data=data)
+    
+plt.subplots_adjust(top=0.9) #espacio adicional entre gráfica y título 
+
+plt.xlabel('Participantes') #eje x título 
+plt.ylabel('Edad (años)') #eje y título 
+    
+plt.text(0.5, 0.9, '', transform=plt.gca().transAxes)
+plt.figtext(0.5, 0.02, texto, ha='center', fontsize=9) 
+# pie de figura, los segundos valores es para moverlo en el eje y y el primero en x para centrarlo o no 
+    
+plt.title('Distribución de edad', y=1.05, pad=20, size="xx-large") # para que no slaga pegado a la gráfica el título 
+    
+plt.xticks(ticks=[], labels=['Participantes'])  # Eliminar las etiquetas del eje x y establecer solo 'Participantes'
+    
+plt.show()
+
+#%%
+
+fnc.edad_clean(data)
