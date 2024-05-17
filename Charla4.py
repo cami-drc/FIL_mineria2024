@@ -39,7 +39,7 @@ calif_limpio = fnc.clean(calif_or)
 
 #%%
 
-fnc.calif(calif_limpio)
+fnc.calif(calif_limpio, title="Calificación general Charla 4")
 
 #%%
 
@@ -48,32 +48,41 @@ fnc.calif(calif_limpio)
 demografia_or = pd.read_csv("Charla4_Demografia.csv").values #saco los valores del csv
 
 #%%
-data = demografia_or[:,1]
+#Edad
 
-promedio = np.mean(data)
-prom_red = round(promedio, 2)
-cont = data.size
+edad = demografia_or[:,1]
 
-texto = "El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
-
-
-sns.violinplot(data=data)
-    
-plt.subplots_adjust(top=0.9) #espacio adicional entre gráfica y título 
-
-plt.xlabel('Participantes') #eje x título 
-plt.ylabel('Edad (años)') #eje y título 
-    
-plt.text(0.5, 0.9, '', transform=plt.gca().transAxes)
-plt.figtext(0.5, 0.02, texto, ha='center', fontsize=9) 
-# pie de figura, los segundos valores es para moverlo en el eje y y el primero en x para centrarlo o no 
-    
-plt.title('Distribución de edad', y=1.05, pad=20, size="xx-large") # para que no slaga pegado a la gráfica el título 
-    
-plt.xticks(ticks=[], labels=['Participantes'])  # Eliminar las etiquetas del eje x y establecer solo 'Participantes'
-    
-plt.show()
+edad = fnc.edad_clean(edad)
 
 #%%
 
-fnc.edad_clean(data)
+fnc.plot_edad(edad)
+
+#%%
+#Genero
+
+generos = demografia_or[:,2]
+
+#%%
+
+fnc.plot_genero(generos)
+
+#%%
+
+ocupacion = demografia_or[:,3]
+#%%
+
+ocupacion_limpio = np.array(['NaN' if isinstance(x, float) and np.isnan(x) else x for x in ocupacion])
+
+valores_unicos, conteos = np.unique(ocupacion_limpio, return_counts=True)
+
+#%%
+
+plt.figure(figsize=(8, 6))
+plt.pie(conteos, labels=valores_unicos, autopct=fnc.autopct_format(conteos), startangle=90, colors=['blue', 'orange', 'green', 'red'])
+
+# Añadir título
+plt.title('Distribución de Ocupaciones')
+
+# Mostrar la gráfica
+plt.show()

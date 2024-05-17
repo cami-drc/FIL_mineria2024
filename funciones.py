@@ -18,7 +18,7 @@ import seaborn as sns
 
 def remove_nan(data):
     """
-    Función para quitar las filas y columnas que tienen puro nan
+    Función para quitar las filas y columnas que tienen PURO nan
 
     Parameters
     ----------
@@ -61,7 +61,8 @@ def remove_id(data):
 
 def clean_data(data):
     """
-    Para quitar las filas (respuestas individuales) que no respondieron todas las preguntas
+    Para quitar las filas (respuestas individuales) que no respondieron todas las preguntas.
+    Es decir, no toda la columna/fila está llena de nan. NO FUNCIONA CON STRINGS
 
     Parameters
     ----------
@@ -151,8 +152,7 @@ def neg_pos(data):
     
 #%%
 
-#Violin
-
+#Likert
 
 def violin(ax, data, labels, title="Violin plot", palette="colorblind"):
     """
@@ -183,7 +183,6 @@ def violin(ax, data, labels, title="Violin plot", palette="colorblind"):
 
     ax.set_title(title)
    
-#Likert
 def graph_neg_pos(data, labels,title="Preguntas Likert",
                   title1="Atributos positivas", title2="Atributos negativas",
                   ylabel='Escala likert (1-5)', palette="colorblind"):
@@ -234,7 +233,9 @@ def graph_neg_pos(data, labels,title="Preguntas Likert",
 
     plt.show()
 #%%
+
 #Calif general
+
 def calif (data, title="Calificación general",
            xlabel="Participantes", ylabel="Puntaje calificación (1-10)",
            text=True, espanol=True):
@@ -252,7 +253,7 @@ def calif (data, title="Calificación general",
     title : string, optional
         título del eje y. The default is "Puntaje calificación (1-10)".
     text : BOOL, optional
-        si es True, se inclluye un pie de figura (en español) que menciona el 
+        si es True, se inclluye un pie de figura que menciona el 
         promedio (redondeado a 2 decimales) y cantidad de respuestas.
         The default is "True".
     espanol : BOOL, optional
@@ -299,6 +300,7 @@ def calif (data, title="Calificación general",
     
     plt.show()
 #%%
+
 # Edad
 
 def plot_edad(data, title="Distribución de edad",
@@ -330,4 +332,31 @@ def plot_edad(data, title="Distribución de edad",
         
     plt.xticks(ticks=[], labels=[xlabel])  # Eliminar las etiquetas del eje x y establecer solo 'Participantes'
         
+    plt.show()
+    
+#%%
+
+#Género
+
+def autopct_format(conteos):
+    
+    def my_format(pct):
+        total = sum(conteos)
+        val = int(round(pct*total/100.0))
+        return f'{pct:.1f}%\n({val:d})'
+   
+    return my_format
+
+
+def plot_genero(data, title="Género Charla 4",
+                   color=['teal', 'steelblue']):
+    
+    valores_unicos, conteos = np.unique(data, return_counts=True)
+
+    plt.figure(figsize=(8, 6))
+    plt.pie(conteos, labels=valores_unicos, autopct=autopct_format(conteos),
+            startangle=90, colors=color)
+
+    plt.title(title, y=0.92, pad=20, size="xx-large")
+
     plt.show()
