@@ -274,6 +274,9 @@ def calif (data, title="Calificación general",
         texto = "Calificación general donde 1 es pésimo y 10 es excelente. El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
     else:
         texto = "General score where 1 is horrible and 10 is excellent.  The number of responses is " +str(cont)+ " and the average is " +str(prom_red)
+        xlabel = "Participants"
+        ylabel = "Score (1-10)"
+        title = "General score"
 
     plt.figure(figsize=(10, 6))  # tamaño de figura
 
@@ -315,9 +318,15 @@ def plot_edad(data, title="Distribución de edad",
         texto = "El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
     else:
         texto = "The number of responses is " +str(cont)+ " and the average is " +str(prom_red)
+        xlabel = "Participants"
+        ylabel = "Age (years)"
+        title = "Age distribution"
 
     sns.violinplot(data=data)
-        
+
+    plt.axhline(y=promedio, color='red', linestyle='--', label='Promedio') #línea para promedio 
+    plt.legend(loc="lower right") #leyenda 
+                  
     plt.subplots_adjust(top=0.9) #espacio adicional entre gráfica y título 
 
     plt.xlabel(xlabel) #eje x título 
@@ -360,3 +369,4 @@ def plot_genero(data, title="Género Charla 4",
     plt.title(title, y=0.92, pad=20, size="xx-large")
 
     plt.show()
+
