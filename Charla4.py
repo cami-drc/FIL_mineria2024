@@ -27,7 +27,7 @@ atributos = ["Gozo","Confusion","Expectativas","Lenguaje","Analogias",
 
 #%%
 
-fnc.graph_neg_pos(likert_limpio, atributos, title="Preguntas Likert Charla 4")
+fnc.graph_neg_pos(likert_limpio, atributos, title="Preguntas Likert Charla 4", espanol=False)
 
 #%%
 
@@ -39,7 +39,7 @@ calif_limpio = fnc.clean(calif_or)
 
 #%%
 
-fnc.calif(calif_limpio, title="Calificación general Charla 4")
+fnc.calif(calif_limpio, title="Calificación general Charla 4", espanol=False)
 
 #%%
 
@@ -56,7 +56,7 @@ edad = fnc.edad_clean(edad)
 
 #%%
 
-fnc.plot_edad(edad)
+fnc.plot_edad(edad, espanol=False)
 
 #%%
 #Genero
@@ -64,12 +64,16 @@ fnc.plot_edad(edad)
 generos = demografia_or[:,2]
 
 #%%
+valores_unicos, conteos = np.unique(generos, return_counts=True)
 
-fnc.plot_genero(generos)
+#%%
+
+fnc.plot_genero(generos, espanol=False)
 
 #%%
 
 ocupacion = demografia_or[:,3]
+
 #%%
 
 ocupacion_limpio = np.array(['NaN' if isinstance(x, float) and np.isnan(x) else x for x in ocupacion])
@@ -86,3 +90,6 @@ plt.title('Distribución de Ocupaciones')
 
 # Mostrar la gráfica
 plt.show()
+
+#%%
+a = np.array(["Women", "Men"])

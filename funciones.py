@@ -185,7 +185,8 @@ def violin(ax, data, labels, title="Violin plot", palette="colorblind"):
    
 def graph_neg_pos(data, labels,title="Preguntas Likert",
                   title1="Atributos positivas", title2="Atributos negativas",
-                  ylabel='Escala likert (1-5)', palette="colorblind"):
+                  ylabel='Escala Likert (1-5)', palette="colorblind",
+                  text=True, espanol=True):
     """
     Hace una figura donde están separados los resultados de las preguntas Likert
     positivas y negativas.
@@ -196,7 +197,7 @@ def graph_neg_pos(data, labels,title="Preguntas Likert",
         los datos a graficar (combinados pos y neg). Tienen que estar en el mismo
         orden que se hicieron las preguntas (no separar pos y neg).
     labels : array/list
-        las etiquetas con los atributos.
+        las etiquetas con los atributos (puedes meterlas en inglés o en español).
     title : string, optional
         el título de la figura. The default is "Preguntas Likert".
     title1 : string, optional
@@ -204,9 +205,16 @@ def graph_neg_pos(data, labels,title="Preguntas Likert",
     title2 : string, optional
         título de la gráfica 2. The default is "Atributos negativas".
     ylabel : string, optional
-        título del eje y. The default is 'Escala likert (1-5)'.
+        título del eje y. The default is 'Escala Likert (1-5)'.
     palette : string, optional
         paleta de colores a usar. The default is "colorblind".
+    text : BOOL, optional
+        si es True, se inclluye un pie de figura que menciona la cantidad de respuestas.
+        The default is "True".
+    espanol : BOOL, optional
+        si es True, el pie de figura, el título y el eje y se escriben en español;
+        si es False, en inglés.
+        The default is "True".
 
     Returns
     -------
@@ -219,11 +227,26 @@ def graph_neg_pos(data, labels,title="Preguntas Likert",
         
     neg, pos = neg_pos(data)  #separo datos en neg y pos
     
+    cont = data[:,0].size
+
+    
+    if espanol:
+        texto = "Preguntas de escala tipo Likert donde 1 es muy en desacuerdo y 5 es muy de acuerdo. El número de respuestas es " +str(cont)
+    else:
+        texto = "Likert scale question where 1 es completely disagree, and 5 is completely agree.  The number of responses is " +str(cont)
+        ylabel = "Likert Scale (1-5)"
+        title1 = "Positive Attributes"
+        title2 = "Negative Attributes"
+        title = "Likert Scale Questions"
+    
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(9, 4), sharey=True)
     
-    fig.suptitle(title, size="xx-large", weight="roman", y=1)
+    fig.suptitle(title, size="xx-large", weight="roman", y=1.0)
     
-    plt.subplots_adjust(top=0.83)
+    plt.subplots_adjust(top=0.8, bottom=0.3)
+    
+    if text:
+        plt.figtext(0.5, 0.02, texto, va="bottom", ha='center', fontsize=9) 
     
     violin(ax1, pos, pos_label, title=title1, palette=palette)
     
@@ -257,7 +280,8 @@ def calif (data, title="Calificación general",
         promedio (redondeado a 2 decimales) y cantidad de respuestas.
         The default is "True".
     espanol : BOOL, optional
-        si es True, el pie de figura se escribe en español; si es False, en inglés.
+        si es True, el pie de figura, el título y el eje y se escriben  en español;
+        si es False, en inglés.
         The default is "True".
 
     Returns
@@ -273,10 +297,10 @@ def calif (data, title="Calificación general",
     if espanol:
         texto = "Calificación general donde 1 es pésimo y 10 es excelente. El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
     else:
-        texto = "General score where 1 is horrible and 10 is excellent.  The number of responses is " +str(cont)+ " and the average is " +str(prom_red)
+        texto = "General score where 1 is horrible and 10 is excellent. The number of responses is " +str(cont)+ " and the average is " +str(prom_red)
         xlabel = "Participants"
         ylabel = "Score (1-10)"
-        title = "General score"
+        title = "General Score"
 
     plt.figure(figsize=(10, 6))  # tamaño de figura
 
@@ -293,8 +317,7 @@ def calif (data, title="Calificación general",
     plt.ylabel(ylabel) #eje y título 
     
     if text:
-        plt.text(0.5, 0.9, '', transform=plt.gca().transAxes)
-        plt.figtext(0.5, 0.02, texto, ha='center', fontsize=9) 
+        plt.figtext(0.5, 0.02, texto, ha='center', fontsize=10) 
         # pie de figura, los segundos valores es para moverlo en el eje y y el primero en x para centrarlo o no 
     
     plt.title(title, y=1.05, pad=20, size="xx-large") # para que no slaga pegado a la gráfica el título 
@@ -314,17 +337,23 @@ def plot_edad(data, title="Distribución de edad",
     prom_red = round(promedio, 2)
     cont = data.size
 
+    hline_label = "Promedio"
+
+
     if espanol:
         texto = "El número de respuestas es " +str(cont)+ " y el promedio es de " +str(prom_red)
     else:
         texto = "The number of responses is " +str(cont)+ " and the average is " +str(prom_red)
         xlabel = "Participants"
         ylabel = "Age (years)"
-        title = "Age distribution"
+        title = "Age Distribution"
+        hline_label = "Average"
+
 
     sns.violinplot(data=data)
 
-    plt.axhline(y=promedio, color='red', linestyle='--', label='Promedio') #línea para promedio 
+
+    plt.axhline(y=promedio, color='red', linestyle='--', label=hline_label) #línea para promedio 
     plt.legend(loc="lower right") #leyenda 
                   
     plt.subplots_adjust(top=0.9) #espacio adicional entre gráfica y título 
@@ -348,6 +377,20 @@ def plot_edad(data, title="Distribución de edad",
 #Género
 
 def autopct_format(conteos):
+    """
+    Función para hacer las etiquetas dentro del diagrama de pie de "Género".
+
+    Parameters
+    ----------
+    conteos : array
+        cuántas respuestas hay para cada variable (fem/masc).
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
     
     def my_format(pct):
         total = sum(conteos)
@@ -357,14 +400,30 @@ def autopct_format(conteos):
     return my_format
 
 
-def plot_genero(data, title="Género Charla 4",
-                   color=['teal', 'steelblue']):
+def plot_genero(data, title="Distribución de género",
+                   color=['teal', 'steelblue', "gainsboro"],
+                   text=True, espanol=True):
     
     valores_unicos, conteos = np.unique(data, return_counts=True)
+
+    cont = np.sum(conteos)
+    
+    if espanol:
+        texto = "El número de respuestas es " +str(cont)
+    else:
+        texto = "The number of responses is " +str(cont)
+        title = "Gender Distribution"
+        valores_unicos = np.array(["Women", "Men"])
 
     plt.figure(figsize=(8, 6))
     plt.pie(conteos, labels=valores_unicos, autopct=autopct_format(conteos),
             startangle=90, colors=color)
+
+    if text:
+        plt.text(0.5, 0.9, '', transform=plt.gca().transAxes)
+        plt.figtext(0.5, 0.12, texto, ha='center', fontsize=9) 
+        # pie de figura, los segundos valores es para moverlo en el eje y y el primero en x para centrarlo o no 
+    
 
     plt.title(title, y=0.92, pad=20, size="xx-large")
 
